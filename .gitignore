@@ -1,0 +1,6 @@
+lib/
+doc/
+*.class
+*.tar
+*.tar.*
+*.html
