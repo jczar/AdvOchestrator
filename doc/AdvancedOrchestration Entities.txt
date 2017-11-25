@@ -1,0 +1,49 @@
+- ServiceContainer:
+   
+     Definition: Executes one individual/atomic service in a host
+
+     API: 
+         Execute
+
+         Receives
+             Start
+             Suspend
+
+         Publishes
+             Started
+             Suspended
+             Ended
+
+
+- OrchestrationNode:
+
+     Definition: 
+		  Entity that represents a node in the orchestration topology
+                 This entity should span the execution of ephemeral containers that 		  run a specific service and publish its corresponding events to it. 
+		  It should be event aware (receiver), and will receive/dispatch the 		  events requested by the Director and publishing outgoing events from 		  the nodes to the Director
+
+     API: 
+         Receives
+	      onEventNotification
+
+  
+- Director
+
+     API: 
+         Receives
+             Event: NodeId
+		     EventId
+
+         
+         Publishes
+             Event: NodeId
+                    EventId
+
+    
+
+- Messaging Topics
+
+
+
+
+

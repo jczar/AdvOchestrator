@@ -1,0 +1,56 @@
+* Types of triggers and execution flow definition
+
+- Finish to start: 
+
+     finish A to start B
+
+     $serviceA | ^serviceB
+     or
+     serviceA | serviceB 
+
+- Start to finish
+
+     start A to finish B (precondition serviceC | serviceB or just serviceB)
+
+     serviceB ; (^serviceA | $serviceB)
+     
+
+- Start to start 
+
+     start A to start B (equates to parallel execution)
+
+     (^serviceA | ^serviceB)
+
+- Finish to finish
+
+     finish B to finish A
+
+     (^serviceA | ^serviceB) ; ($serviceB | $serviceA)
+
+
+- Custom/Internal events:
+
+   Suspended
+ 
+
+* Host tagging:
+
+   - Services need to be associated to an abstract host, via tags
+     (serviceA@db* | serviceB@) 
+
+   - If no host is specified, the framework will attempt to run the operation
+     at the same host where the command is invoked from.           
+
+
+* Assumptions and conventions:
+
+1. There should be only one mention of a single service (with no pipes).
+   That service will be assumed to be the starting point of the execution
+2. Unchained service invocations should be separated by ;
+
+
+* Potential use cases
+
+
+
+
