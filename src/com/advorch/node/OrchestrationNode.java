@@ -3,11 +3,12 @@ package com.advorch.node;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.advorch.event.util.EventMessageValidator;
 import com.advorch.exception.AdvOrchException;
 import com.advorch.message.EventMessage;
 import com.advorch.node.event.EventPublisher;
 import com.advorch.node.event.NodeEventAware;
-import com.advorch.node.event.util.EventMessageValidator;
+import com.advorch.node.service.BlockeableContainer;
 import com.advorch.node.service.ServiceContainer;
 import com.advorch.node.service.ServiceContainerFactory;
 
@@ -60,8 +61,10 @@ public class OrchestrationNode implements NodeEventAware {
 		}
 	}
 	
-	public void onOutgoingEvent(EventMessage eventMessage) {
+	public boolean onOutgoingEvent(EventMessage eventMessage) {
 		publisher.publishEvent(eventMessage);
+		
+		return true;
 	}
 
 	public void onIncomingEvent(EventMessage eventMessage) {
@@ -72,6 +75,16 @@ public class OrchestrationNode implements NodeEventAware {
 		if (validator.isMessageValid(eventMessage)) {
 			dispatchEvent(eventMessage);
 		}
+	}
+	
+	public boolean onOutgoingBlockingEvent(EventMessage eventMessage, BlockeableContainer container) {
+        if (!publisher.publishEvent(eventMessage)) {
+        	return false;
+        }
+        
+        container.block();
+        
+        return true;
 	}
 
 	public String getNodeId() {

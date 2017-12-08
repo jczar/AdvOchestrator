@@ -6,7 +6,7 @@ import com.advorch.message.EventMessage;
 import com.advorch.node.event.NodeEventAware;
 import com.advorch.node.event.NodeEventNotifier;
 
-public class ServiceContainer implements NodeEventNotifier {
+public class ServiceContainer extends BlockeableContainer implements NodeEventNotifier {
 
 	private Service service;
 	private NodeEventAware eventHandler;
@@ -16,24 +16,7 @@ public class ServiceContainer implements NodeEventNotifier {
 		this.eventHandler = eventHandler;
 	}
 	
-	public void runIt() throws AdvOrchException {
-		onNodeStart();
-		
-		try {
-		    execute();
-		    
-		} catch (AdvOrchException oe) {
-			onNodeFailed(oe);
-			throw oe;
-			
-		} catch (Exception e) {
-			onNodeFailed(e);
-			throw new AdvOrchException("", e);
-		}
-		
-		onNodeEnd();
-	}
-	
+	@Override
 	public void execute() throws AdvOrchException {		
 		// TODO: Add some sort of validation of the service readiness for being executed
 		
@@ -42,17 +25,22 @@ public class ServiceContainer implements NodeEventNotifier {
 		}
 	}
 	
+	@Override
 	public void onNodeStart() {
-		eventHandler.onOutgoingEvent(new EventMessage(EventType.START, service.getId()));
+		eventHandler.onOutgoingBlockingEvent(new EventMessage(EventType.START, service.getId()), this);
 	}
 	
+	@Override
 	public void onNodeEnd() {
 		eventHandler.onOutgoingEvent(new EventMessage(EventType.END, service.getId()));
 	}	
 	
+	@Override
 	public void onNodeFailed(Throwable t) {		
 	}
 	
+	@Override
 	public void onNodeSuspended() {		
 	}
+	
 }

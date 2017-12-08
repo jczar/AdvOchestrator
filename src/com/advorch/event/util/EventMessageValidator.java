@@ -1,4 +1,4 @@
-package com.advorch.node.event.util;
+package com.advorch.event.util;
 
 import com.advorch.message.EventMessage;
 

@@ -4,6 +4,6 @@ import com.advorch.message.EventMessage;
 
 public interface EventPublisher {
 
-	public void publishEvent(EventMessage eventMessage);
+	public boolean publishEvent(EventMessage eventMessage);
 	
 }
