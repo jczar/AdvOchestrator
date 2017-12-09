@@ -1,6 +1,8 @@
 package com.advorch.node.event;
 
+import com.advorch.message.EventMessage;
+
 public interface EventReceiver {
 
-	public void receiveEvent();
+	public EventMessage receiveEvent();
 }

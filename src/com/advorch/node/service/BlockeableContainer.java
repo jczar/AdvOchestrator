@@ -4,6 +4,9 @@ public abstract class BlockeableContainer extends GenericContainer implements Ru
 	
 	private Object lock = new Object();
 	
+	private final static int BLOCK_TIMEOUT = 5000;
+	private boolean isWaitingForResponse = false; 
+	
 	@Override
 	public void run() {
 		runIt();
@@ -22,7 +25,17 @@ public abstract class BlockeableContainer extends GenericContainer implements Ru
 	}
 	
 	public void block() {
-		//
+		
+		synchronized (lock) {
+			isWaitingForResponse = true;
+			try {
+				lock.wait(BLOCK_TIMEOUT);
+				
+				isWaiting
+			} catch (InterruptedException ie) {
+				
+			}
+		}
 		// this.getLock().wait();
 	}
 }

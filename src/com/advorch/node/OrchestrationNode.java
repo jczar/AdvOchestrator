@@ -7,6 +7,7 @@ import com.advorch.event.util.EventMessageValidator;
 import com.advorch.exception.AdvOrchException;
 import com.advorch.message.EventMessage;
 import com.advorch.node.event.EventPublisher;
+import com.advorch.node.event.EventReceiver;
 import com.advorch.node.event.NodeEventAware;
 import com.advorch.node.service.BlockeableContainer;
 import com.advorch.node.service.ServiceContainer;
@@ -16,10 +17,12 @@ public class OrchestrationNode implements NodeEventAware {
 	
 	private String nodeId;
 	private Map<String, ServiceContainer> serviceContainers = new HashMap<String, ServiceContainer>();
-	private EventPublisher publisher;	
+	private EventPublisher publisher;
+	private EventReceiver receiver;
+	
 	private EventMessageValidator validator = new EventMessageValidator();
 	
-	public OrchestrationNode(String nodeId, EventPublisher publisher) {
+	public OrchestrationNode(String nodeId, EventPublisher publisher, EventReceiver receiver) {
 		this.nodeId = nodeId;
 		this.publisher = publisher;
 	}
@@ -53,6 +56,8 @@ public class OrchestrationNode implements NodeEventAware {
 		
 		switch (event.getEventType()) {
 		    case START:
+		    	// HAndle through a START events handler
+		    	// should check if service container is currently blocked
 		    	svcContainer.runIt();
 		    	
 		    	break;		
@@ -77,12 +82,19 @@ public class OrchestrationNode implements NodeEventAware {
 		}
 	}
 	
-	public boolean onOutgoingBlockingEvent(EventMessage eventMessage, BlockeableContainer container) {
-        if (!publisher.publishEvent(eventMessage)) {
+	public boolean onOutgoingBlockingEvent(EventMessage eventMessageRequest, BlockeableContainer container) {
+        if (!publisher.publishEvent(eventMessageRequest)) {
         	return false;
         }
         
         container.block();
+        
+        // By this point, the thread should have been unblocked and a response
+        // should have arrived
+        EventMessage eventMessageResponse = receiver.receiveEvent();
+        
+        
+        
         
         return true;
 	}
